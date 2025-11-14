@@ -1,0 +1,85 @@
+# RL Trading Framework 默认配置
+
+# 环境配置
+environment:
+  target_quantity: 10000
+  max_steps: 50
+  initial_cash: 1000000.0
+  side: "buy"  # buy or sell
+  symbol: "ASSET"
+  window_size: 20
+
+# 数据配置
+data:
+  type: "synthetic"  # synthetic or csv
+  # Synthetic数据配置
+  synthetic:
+    initial_price: 100.0
+    mu: 0.0  # 年化漂移率
+    sigma: 0.2  # 年化波动率
+    dt: 60.0  # 时间步长（秒）
+    num_steps: 2000
+  # CSV数据配置
+  csv:
+    data_dir: "./data"
+    normalize: false
+
+# 执行引擎配置
+execution:
+  type: "simple"  # simple or realistic
+  permanent_impact_coef: 0.1
+  temporary_impact_coef: 0.5
+  impact_exponent: 0.6
+  base_slippage: 0.0001
+
+# 奖励函数配置
+reward:
+  type: "implementation_shortfall"  # implementation_shortfall, pnl_based, composite
+  time_penalty_weight: 0.001
+  completion_bonus: 1.0
+  risk_aversion: 0.1
+  normalize: true
+
+# 策略网络配置
+policy:
+  type: "mlp"  # mlp or lstm
+  mlp:
+    hidden_sizes: [256, 256]
+    activation: "relu"
+    learning_rate: 0.0003
+  lstm:
+    hidden_size: 128
+    num_layers: 2
+    fc_sizes: [128]
+    learning_rate: 0.0003
+
+# 智能体配置
+agent:
+  type: "dqn"  # dqn or ppo
+  dqn:
+    gamma: 0.99
+    epsilon_start: 1.0
+    epsilon_end: 0.01
+    epsilon_decay: 0.995
+    buffer_size: 100000
+    batch_size: 64
+    target_update_freq: 10
+  ppo:
+    clip_epsilon: 0.2
+    epochs: 10
+    batch_size: 64
+    gamma: 0.99
+    gae_lambda: 0.95
+
+# 训练配置
+training:
+  num_episodes: 100
+  save_dir: "models"
+  log_interval: 10
+  save_interval: 50
+  device: "cpu"  # cpu or cuda
+
+# 评估配置
+evaluation:
+  num_episodes: 10
+  deterministic: true

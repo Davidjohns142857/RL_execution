@@ -1,0 +1,32 @@
+# RL Trading Framework Requirements
+
+# Core dependencies
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Deep Learning
+torch>=1.10.0
+
+# Visualization (optional)
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Progress bars
+tqdm>=4.62.0
+
+# Data handling
+scipy>=1.7.0
+
+# Configuration
+pyyaml>=5.4.0
+
+# Testing (optional)
+pytest>=6.2.0
+pytest-cov>=2.12.0
+
+# Jupyter (optional, for examples)
+jupyter>=1.0.0
+ipython>=7.27.0
+
+# Logging
+tensorboard>=2.7.0
