@@ -39,18 +39,46 @@ class MarketData:
     """
     市场数据
 
+    支持从简单的OHLCV数据到完整的Level-2高频数据（10档行情）
+
     Attributes:
         timestamp: 时间戳（Unix时间戳，单位：秒）
         open: 开盘价
         high: 最高价
         low: 最低价
-        close: 收盘价
+        close: 收盘价（或最新价last_prc）
         volume: 成交量
+
+        # Level-1 数据（可选）
         bid_price: 买一价（可选）
         ask_price: 卖一价（可选）
         bid_volume: 买一量（可选）
         ask_volume: 卖一量（可选）
         vwap: 成交量加权平均价（可选）
+
+        # Level-2 高频数据（可选）
+        bid_prices: 买盘价格列表（10档，可选）
+        bid_volumes: 买盘数量列表（10档，可选）
+        ask_prices: 卖盘价格列表（10档，可选）
+        ask_volumes: 卖盘数量列表（10档，可选）
+
+        # 额外市场信息（可选）
+        prev_close: 昨收价（可选）
+        turnover: 成交额（可选）
+        num_trades: 成交笔数（可选）
+        high_limited: 涨停价（可选）
+        low_limited: 跌停价（可选）
+        weighted_bid_price: 加权买价（可选）
+        weighted_ask_price: 加权卖价（可选）
+        total_bid_volume: 买盘总量（可选）
+        total_ask_volume: 卖盘总量（可选）
+        trading_status: 交易状态（可选，83=开市前，67=集合竞价，84=连续交易，69=闭市，66=休市）
+
+        # 元数据（可选）
+        symbol: 股票代码（可选）
+        datetime_str: 日期时间字符串（可选）
+        exchtime: 交易所时间戳微秒（可选）
+        localtime: 本地时间戳微秒（可选）
     """
     timestamp: float
     open: float
@@ -58,11 +86,37 @@ class MarketData:
     low: float
     close: float
     volume: float
+
+    # Level-1
     bid_price: Optional[float] = None
     ask_price: Optional[float] = None
     bid_volume: Optional[float] = None
     ask_volume: Optional[float] = None
     vwap: Optional[float] = None
+
+    # Level-2 (10档行情)
+    bid_prices: Optional[List[float]] = None
+    bid_volumes: Optional[List[float]] = None
+    ask_prices: Optional[List[float]] = None
+    ask_volumes: Optional[List[float]] = None
+
+    # 额外信息
+    prev_close: Optional[float] = None
+    turnover: Optional[float] = None
+    num_trades: Optional[int] = None
+    high_limited: Optional[float] = None
+    low_limited: Optional[float] = None
+    weighted_bid_price: Optional[float] = None
+    weighted_ask_price: Optional[float] = None
+    total_bid_volume: Optional[float] = None
+    total_ask_volume: Optional[float] = None
+    trading_status: Optional[int] = None
+
+    # 元数据
+    symbol: Optional[str] = None
+    datetime_str: Optional[str] = None
+    exchtime: Optional[int] = None
+    localtime: Optional[int] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典格式"""
@@ -78,7 +132,45 @@ class MarketData:
             'bid_volume': self.bid_volume,
             'ask_volume': self.ask_volume,
             'vwap': self.vwap,
+            'bid_prices': self.bid_prices,
+            'bid_volumes': self.bid_volumes,
+            'ask_prices': self.ask_prices,
+            'ask_volumes': self.ask_volumes,
+            'prev_close': self.prev_close,
+            'turnover': self.turnover,
+            'num_trades': self.num_trades,
+            'high_limited': self.high_limited,
+            'low_limited': self.low_limited,
+            'weighted_bid_price': self.weighted_bid_price,
+            'weighted_ask_price': self.weighted_ask_price,
+            'total_bid_volume': self.total_bid_volume,
+            'total_ask_volume': self.total_ask_volume,
+            'trading_status': self.trading_status,
+            'symbol': self.symbol,
+            'datetime_str': self.datetime_str,
+            'exchtime': self.exchtime,
+            'localtime': self.localtime,
         }
+
+    def get_mid_price(self) -> float:
+        """获取中间价（买一卖一的平均）"""
+        if self.bid_price is not None and self.ask_price is not None:
+            return (self.bid_price + self.ask_price) / 2.0
+        return self.close
+
+    def get_spread(self) -> float:
+        """获取买卖价差"""
+        if self.bid_price is not None and self.ask_price is not None:
+            return self.ask_price - self.bid_price
+        return 0.0
+
+    def get_spread_bps(self) -> float:
+        """获取买卖价差（基点，万分之一）"""
+        spread = self.get_spread()
+        mid = self.get_mid_price()
+        if mid > 0:
+            return (spread / mid) * 10000
+        return 0.0
 
 
 @dataclass
