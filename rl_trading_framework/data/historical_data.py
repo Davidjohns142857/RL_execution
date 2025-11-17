@@ -414,3 +414,17 @@ class HistoricalDataLoader(BaseDataLoader):
             }
         except Exception as e:
             return {'error': str(e)}
+
+    def preprocess(self, data: List[MarketData]) -> List[MarketData]:
+        """
+        预处理数据
+
+        Args:
+            data: 原始数据列表
+
+        Returns:
+            预处理后的数据列表
+        """
+        # 默认不做额外预处理，因为已经在load_data中处理了
+        # 如果需要额外的预处理，可以在这里添加
+        return data

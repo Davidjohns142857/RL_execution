@@ -28,7 +28,9 @@ from rl_trading_framework.core.types import Action
 
 
 # ==================== 配置参数 ====================
-DATA_DIR = "/path/to/your/data/market_data"  # 修改为你的数据路径
+# 使用示例数据路径
+import os as _os_temp
+DATA_DIR = _os_temp.path.join(_os_temp.path.dirname(__file__), "..", "example_data", "market_data")
 SYMBOL = "000001"
 DATE = "20170105"
 
@@ -194,8 +196,8 @@ def create_environment(data):
             temporary_impact_coef=0.005,
         ),
         reward_function=ImplementationShortfallReward(
-            arrival_price_weight=1.0,
-            vwap_weight=0.5,
+            time_penalty_weight=0.001,
+            completion_bonus=1.0,
         ),
         target_quantity=TARGET_QUANTITY,
         max_steps=MAX_STEPS,

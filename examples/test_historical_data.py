@@ -32,8 +32,8 @@ def test_data_loading():
     print("=" * 60)
 
     # ==================== 重要：设置你的数据路径 ====================
-    # 请将下面的路径改为你的实际数据路径
-    DATA_DIR = "/path/to/your/data/market_data"  # 修改为你的数据路径
+    # 使用示例数据路径
+    DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "example_data", "market_data")
     SYMBOL = "000001"  # 股票代码
     DATE = "20170105"  # 日期 YYYYMMDD格式
 
